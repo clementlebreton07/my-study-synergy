@@ -29,15 +29,15 @@ function SettingsPage() {
 
   useEffect(() => {
     if (!profile) return;
-    setName((profile["full_name"] as string) ?? "");
-    setGoal(Number(profile["daily_goal_minutes"] ?? 120));
+    setName(profile.first_name ?? "");
+    setGoal(Number(profile.daily_goal_minutes ?? 120));
   }, [profile]);
 
   return (
     <AppShell title="Paramètres" description="Votre profil et vos préférences.">
       <div className="surface max-w-xl space-y-5 p-6">
         <Field label="Adresse e-mail">
-          <Input value={(profile?.["email"] as string) ?? ""} disabled />
+          <Input value={profile?.email ?? ""} disabled />
         </Field>
         <Field label="Nom affiché">
           <Input value={name} maxLength={80} onChange={(e) => setName(e.target.value)} />
@@ -57,7 +57,7 @@ function SettingsPage() {
             disabled={save.isPending}
             onClick={() =>
               save.mutate({
-                full_name: name.trim() || null,
+                first_name: name.trim() || null,
                 daily_goal_minutes: Math.min(720, Math.max(15, goal || 120)),
               })
             }

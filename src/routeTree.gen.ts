@@ -15,7 +15,9 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedCoursRouteImport } from './routes/_authenticated/cours'
 import { Route as AuthenticatedExamensRouteImport } from './routes/_authenticated/examens'
 import { Route as AuthenticatedExercicesRouteImport } from './routes/_authenticated/exercices'
+import { Route as AuthenticatedParametresRouteImport } from './routes/_authenticated/parametres'
 import { Route as AuthenticatedPlanningRouteImport } from './routes/_authenticated/planning'
+import { Route as AuthenticatedProgressionRouteImport } from './routes/_authenticated/progression'
 import { Route as AuthenticatedTachesRouteImport } from './routes/_authenticated/taches'
 import { Route as AuthenticatedMatieresIndexRouteImport } from './routes/_authenticated/matieres.index'
 import { Route as AuthenticatedMatieresSubjectIdRouteImport } from './routes/_authenticated/matieres.$subjectId'
@@ -49,11 +51,22 @@ const AuthenticatedExercicesRoute = AuthenticatedExercicesRouteImport.update({
   path: '/exercices',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedParametresRoute = AuthenticatedParametresRouteImport.update({
+  id: '/parametres',
+  path: '/parametres',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPlanningRoute = AuthenticatedPlanningRouteImport.update({
   id: '/planning',
   path: '/planning',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedProgressionRoute =
+  AuthenticatedProgressionRouteImport.update({
+    id: '/progression',
+    path: '/progression',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedTachesRoute = AuthenticatedTachesRouteImport.update({
   id: '/taches',
   path: '/taches',
@@ -78,7 +91,9 @@ export interface FileRoutesByFullPath {
   '/cours': typeof AuthenticatedCoursRoute
   '/examens': typeof AuthenticatedExamensRoute
   '/exercices': typeof AuthenticatedExercicesRoute
+  '/parametres': typeof AuthenticatedParametresRoute
   '/planning': typeof AuthenticatedPlanningRoute
+  '/progression': typeof AuthenticatedProgressionRoute
   '/taches': typeof AuthenticatedTachesRoute
   '/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
   '/matieres/': typeof AuthenticatedMatieresIndexRoute
@@ -89,7 +104,9 @@ export interface FileRoutesByTo {
   '/cours': typeof AuthenticatedCoursRoute
   '/examens': typeof AuthenticatedExamensRoute
   '/exercices': typeof AuthenticatedExercicesRoute
+  '/parametres': typeof AuthenticatedParametresRoute
   '/planning': typeof AuthenticatedPlanningRoute
+  '/progression': typeof AuthenticatedProgressionRoute
   '/taches': typeof AuthenticatedTachesRoute
   '/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
   '/matieres': typeof AuthenticatedMatieresIndexRoute
@@ -102,7 +119,9 @@ export interface FileRoutesById {
   '/_authenticated/cours': typeof AuthenticatedCoursRoute
   '/_authenticated/examens': typeof AuthenticatedExamensRoute
   '/_authenticated/exercices': typeof AuthenticatedExercicesRoute
+  '/_authenticated/parametres': typeof AuthenticatedParametresRoute
   '/_authenticated/planning': typeof AuthenticatedPlanningRoute
+  '/_authenticated/progression': typeof AuthenticatedProgressionRoute
   '/_authenticated/taches': typeof AuthenticatedTachesRoute
   '/_authenticated/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
   '/_authenticated/matieres/': typeof AuthenticatedMatieresIndexRoute
@@ -115,7 +134,9 @@ export interface FileRouteTypes {
     | '/cours'
     | '/examens'
     | '/exercices'
+    | '/parametres'
     | '/planning'
+    | '/progression'
     | '/taches'
     | '/matieres/$subjectId'
     | '/matieres/'
@@ -126,7 +147,9 @@ export interface FileRouteTypes {
     | '/cours'
     | '/examens'
     | '/exercices'
+    | '/parametres'
     | '/planning'
+    | '/progression'
     | '/taches'
     | '/matieres/$subjectId'
     | '/matieres'
@@ -138,7 +161,9 @@ export interface FileRouteTypes {
     | '/_authenticated/cours'
     | '/_authenticated/examens'
     | '/_authenticated/exercices'
+    | '/_authenticated/parametres'
     | '/_authenticated/planning'
+    | '/_authenticated/progression'
     | '/_authenticated/taches'
     | '/_authenticated/matieres/$subjectId'
     | '/_authenticated/matieres/'
@@ -194,11 +219,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExercicesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/parametres': {
+      id: '/_authenticated/parametres'
+      path: '/parametres'
+      fullPath: '/parametres'
+      preLoaderRoute: typeof AuthenticatedParametresRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/planning': {
       id: '/_authenticated/planning'
       path: '/planning'
       fullPath: '/planning'
       preLoaderRoute: typeof AuthenticatedPlanningRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/progression': {
+      id: '/_authenticated/progression'
+      path: '/progression'
+      fullPath: '/progression'
+      preLoaderRoute: typeof AuthenticatedProgressionRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/taches': {
@@ -229,7 +268,9 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCoursRoute: typeof AuthenticatedCoursRoute
   AuthenticatedExamensRoute: typeof AuthenticatedExamensRoute
   AuthenticatedExercicesRoute: typeof AuthenticatedExercicesRoute
+  AuthenticatedParametresRoute: typeof AuthenticatedParametresRoute
   AuthenticatedPlanningRoute: typeof AuthenticatedPlanningRoute
+  AuthenticatedProgressionRoute: typeof AuthenticatedProgressionRoute
   AuthenticatedTachesRoute: typeof AuthenticatedTachesRoute
   AuthenticatedMatieresSubjectIdRoute: typeof AuthenticatedMatieresSubjectIdRoute
   AuthenticatedMatieresIndexRoute: typeof AuthenticatedMatieresIndexRoute
@@ -239,7 +280,9 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCoursRoute: AuthenticatedCoursRoute,
   AuthenticatedExamensRoute: AuthenticatedExamensRoute,
   AuthenticatedExercicesRoute: AuthenticatedExercicesRoute,
+  AuthenticatedParametresRoute: AuthenticatedParametresRoute,
   AuthenticatedPlanningRoute: AuthenticatedPlanningRoute,
+  AuthenticatedProgressionRoute: AuthenticatedProgressionRoute,
   AuthenticatedTachesRoute: AuthenticatedTachesRoute,
   AuthenticatedMatieresSubjectIdRoute: AuthenticatedMatieresSubjectIdRoute,
   AuthenticatedMatieresIndexRoute: AuthenticatedMatieresIndexRoute,
