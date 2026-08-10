@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedCoursRouteImport } from './routes/_authenticated/cours'
 import { Route as AuthenticatedExamensRouteImport } from './routes/_authenticated/examens'
 import { Route as AuthenticatedExercicesRouteImport } from './routes/_authenticated/exercices'
 import { Route as AuthenticatedTachesRouteImport } from './routes/_authenticated/taches'
@@ -31,6 +32,11 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedCoursRoute = AuthenticatedCoursRouteImport.update({
+  id: '/cours',
+  path: '/cours',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedExamensRoute = AuthenticatedExamensRouteImport.update({
   id: '/examens',
@@ -63,6 +69,7 @@ const AuthenticatedMatieresSubjectIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/cours': typeof AuthenticatedCoursRoute
   '/examens': typeof AuthenticatedExamensRoute
   '/exercices': typeof AuthenticatedExercicesRoute
   '/taches': typeof AuthenticatedTachesRoute
@@ -72,6 +79,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/cours': typeof AuthenticatedCoursRoute
   '/examens': typeof AuthenticatedExamensRoute
   '/exercices': typeof AuthenticatedExercicesRoute
   '/taches': typeof AuthenticatedTachesRoute
@@ -83,6 +91,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/cours': typeof AuthenticatedCoursRoute
   '/_authenticated/examens': typeof AuthenticatedExamensRoute
   '/_authenticated/exercices': typeof AuthenticatedExercicesRoute
   '/_authenticated/taches': typeof AuthenticatedTachesRoute
@@ -94,6 +103,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/auth'
+    | '/cours'
     | '/examens'
     | '/exercices'
     | '/taches'
@@ -103,6 +113,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/auth'
+    | '/cours'
     | '/examens'
     | '/exercices'
     | '/taches'
@@ -113,6 +124,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/cours'
     | '/_authenticated/examens'
     | '/_authenticated/exercices'
     | '/_authenticated/taches'
@@ -148,6 +160,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated/cours': {
+      id: '/_authenticated/cours'
+      path: '/cours'
+      fullPath: '/cours'
+      preLoaderRoute: typeof AuthenticatedCoursRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/examens': {
       id: '/_authenticated/examens'
@@ -188,6 +207,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCoursRoute: typeof AuthenticatedCoursRoute
   AuthenticatedExamensRoute: typeof AuthenticatedExamensRoute
   AuthenticatedExercicesRoute: typeof AuthenticatedExercicesRoute
   AuthenticatedTachesRoute: typeof AuthenticatedTachesRoute
@@ -196,6 +216,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCoursRoute: AuthenticatedCoursRoute,
   AuthenticatedExamensRoute: AuthenticatedExamensRoute,
   AuthenticatedExercicesRoute: AuthenticatedExercicesRoute,
   AuthenticatedTachesRoute: AuthenticatedTachesRoute,
