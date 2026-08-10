@@ -38,8 +38,8 @@ function ProgressPage() {
   const since = toISODate(addDays(new Date(), -7));
   const weekMinutes = sessions
     .filter((s) => String(s["session_date"] ?? "") >= since)
-    .reduce((sum, s) => sum + Number(s["duration_minutes"] ?? 0), 0);
-  const totalMinutes = sessions.reduce((sum, s) => sum + Number(s["duration_minutes"] ?? 0), 0);
+    .reduce((sum, s) => sum + Number(s["minutes"] ?? 0), 0);
+  const totalMinutes = sessions.reduce((sum, s) => sum + Number(s["minutes"] ?? 0), 0);
   const doneTasks = tasks.filter((t) => t["status"] === "done").length;
   const doneExercises = exercises.filter((e) => e["status"] === "done").length;
   const globalMastery = chapters.length

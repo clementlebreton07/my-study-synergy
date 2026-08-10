@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { CalendarDays, CheckCircle2, Clock, Plus, Timer, Trophy } from "lucide-react";
+import { CalendarDays, CircleCheck as CheckCircle2, Clock, Plus, Timer, Trophy } from "lucide-react";
 
 import { AppShell } from "@/components/AppShell";
 import { Field, OptionSelect, useSubjectOptions } from "@/components/common";
@@ -89,7 +89,7 @@ function LogSessionDialog() {
               save.mutate(
                 {
                   session_date: today(),
-                  duration_minutes: Math.min(600, Math.max(5, minutes || 30)),
+                  minutes: Math.min(600, Math.max(5, minutes || 30)),
                   subject_id: subjectId,
                 },
                 { onSuccess: () => setOpen(false) },
@@ -121,7 +121,7 @@ function DashboardPage() {
   const goal = Number(profile?.daily_goal_minutes ?? 120);
   const doneToday = sessions
     .filter((s) => s["session_date"] === iso)
-    .reduce((sum, s) => sum + Number(s["duration_minutes"] ?? 0), 0);
+    .reduce((sum, s) => sum + Number(s["minutes"] ?? 0), 0);
   const mastery = chapters.length
     ? Math.round(
         chapters.reduce((sum, c) => sum + masteryWeight(String(c["mastery"] ?? "not_started")), 0) /
