@@ -42,14 +42,20 @@ function CoursesPage() {
     const { data, error } = await supabase.storage
       .from("documents")
       .createSignedUrl(doc["storage_path"] as string, 60);
-    if (error || !data) return toast.error("Fichier introuvable");
+    if (error || !data) {
+      toast.error("Fichier introuvable");
+      return;
+    }
     window.open(data.signedUrl, "_blank", "noopener");
   }
 
   async function removeDocument(doc: Row) {
     await supabase.storage.from("documents").remove([doc["storage_path"] as string]);
     const { error } = await supabase.from("documents").delete().eq("id", doc["id"] as string);
-    if (error) return toast.error(error.message);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     await queryClient.invalidateQueries();
     toast.success("Document supprimé");
   }

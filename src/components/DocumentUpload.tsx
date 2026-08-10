@@ -57,7 +57,7 @@ export function DocumentUpload({
         const path = `${userId}/${crypto.randomUUID()}-${safeName}`;
         const { error: storageError } = await supabase.storage
           .from("documents")
-          .upload(path, file, { contentType: file.type || undefined });
+          .upload(path, file, { contentType: file.type || "application/octet-stream" });
         if (storageError) throw storageError;
 
         const { error } = await supabase.from("documents").insert({
