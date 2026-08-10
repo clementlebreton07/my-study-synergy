@@ -12,8 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as AuthenticatedMatieresRouteImport } from './routes/_authenticated/matieres'
 import { Route as AuthenticatedTachesRouteImport } from './routes/_authenticated/taches'
+import { Route as AuthenticatedMatieresIndexRouteImport } from './routes/_authenticated/matieres.index'
 import { Route as AuthenticatedMatieresSubjectIdRouteImport } from './routes/_authenticated/matieres.$subjectId'
 
 const IndexRoute = IndexRouteImport.update({
@@ -30,59 +30,60 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AuthenticatedMatieresRoute = AuthenticatedMatieresRouteImport.update({
-  id: '/matieres',
-  path: '/matieres',
-  getParentRoute: () => AuthenticatedRouteRoute,
-} as any)
 const AuthenticatedTachesRoute = AuthenticatedTachesRouteImport.update({
   id: '/taches',
   path: '/taches',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedMatieresIndexRoute =
+  AuthenticatedMatieresIndexRouteImport.update({
+    id: '/matieres/',
+    path: '/matieres/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedMatieresSubjectIdRoute =
   AuthenticatedMatieresSubjectIdRouteImport.update({
-    id: '/$subjectId',
-    path: '/$subjectId',
-    getParentRoute: () => AuthenticatedMatieresRoute,
+    id: '/matieres/$subjectId',
+    path: '/matieres/$subjectId',
+    getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/matieres': typeof AuthenticatedMatieresRouteWithChildren
   '/taches': typeof AuthenticatedTachesRoute
   '/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
+  '/matieres/': typeof AuthenticatedMatieresIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/matieres': typeof AuthenticatedMatieresRouteWithChildren
   '/taches': typeof AuthenticatedTachesRoute
   '/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
+  '/matieres': typeof AuthenticatedMatieresIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
-  '/_authenticated/matieres': typeof AuthenticatedMatieresRouteWithChildren
   '/_authenticated/taches': typeof AuthenticatedTachesRoute
   '/_authenticated/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
+  '/_authenticated/matieres/': typeof AuthenticatedMatieresIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/matieres' | '/taches' | '/matieres/$subjectId'
+  fullPaths: '/' | '/auth' | '/taches' | '/matieres/$subjectId' | '/matieres/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/matieres' | '/taches' | '/matieres/$subjectId'
+  to: '/' | '/auth' | '/taches' | '/matieres/$subjectId' | '/matieres'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
-    | '/_authenticated/matieres'
     | '/_authenticated/taches'
     | '/_authenticated/matieres/$subjectId'
+    | '/_authenticated/matieres/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -114,13 +115,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/_authenticated/matieres': {
-      id: '/_authenticated/matieres'
-      path: '/matieres'
-      fullPath: '/matieres'
-      preLoaderRoute: typeof AuthenticatedMatieresRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
     '/_authenticated/taches': {
       id: '/_authenticated/taches'
       path: '/taches'
@@ -128,37 +122,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTachesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/matieres/': {
+      id: '/_authenticated/matieres/'
+      path: '/matieres'
+      fullPath: '/matieres/'
+      preLoaderRoute: typeof AuthenticatedMatieresIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/matieres/$subjectId': {
       id: '/_authenticated/matieres/$subjectId'
-      path: '/$subjectId'
+      path: '/matieres/$subjectId'
       fullPath: '/matieres/$subjectId'
       preLoaderRoute: typeof AuthenticatedMatieresSubjectIdRouteImport
-      parentRoute: typeof AuthenticatedMatieresRoute
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
-interface AuthenticatedMatieresRouteChildren {
-  AuthenticatedMatieresSubjectIdRoute: typeof AuthenticatedMatieresSubjectIdRoute
-}
-
-const AuthenticatedMatieresRouteChildren: AuthenticatedMatieresRouteChildren = {
-  AuthenticatedMatieresSubjectIdRoute: AuthenticatedMatieresSubjectIdRoute,
-}
-
-const AuthenticatedMatieresRouteWithChildren =
-  AuthenticatedMatieresRoute._addFileChildren(
-    AuthenticatedMatieresRouteChildren,
-  )
-
 interface AuthenticatedRouteRouteChildren {
-  AuthenticatedMatieresRoute: typeof AuthenticatedMatieresRouteWithChildren
   AuthenticatedTachesRoute: typeof AuthenticatedTachesRoute
+  AuthenticatedMatieresSubjectIdRoute: typeof AuthenticatedMatieresSubjectIdRoute
+  AuthenticatedMatieresIndexRoute: typeof AuthenticatedMatieresIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
-  AuthenticatedMatieresRoute: AuthenticatedMatieresRouteWithChildren,
   AuthenticatedTachesRoute: AuthenticatedTachesRoute,
+  AuthenticatedMatieresSubjectIdRoute: AuthenticatedMatieresSubjectIdRoute,
+  AuthenticatedMatieresIndexRoute: AuthenticatedMatieresIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
