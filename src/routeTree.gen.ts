@@ -19,6 +19,7 @@ import { Route as AuthenticatedExercicesRouteImport } from './routes/_authentica
 import { Route as AuthenticatedParametresRouteImport } from './routes/_authenticated/parametres'
 import { Route as AuthenticatedPlanningRouteImport } from './routes/_authenticated/planning'
 import { Route as AuthenticatedProgressionRouteImport } from './routes/_authenticated/progression'
+import { Route as AuthenticatedTableauDeBordRouteImport } from './routes/_authenticated/tableau-de-bord'
 import { Route as AuthenticatedTachesRouteImport } from './routes/_authenticated/taches'
 import { Route as AuthenticatedMatieresIndexRouteImport } from './routes/_authenticated/matieres.index'
 import { Route as AuthenticatedMatieresSubjectIdRouteImport } from './routes/_authenticated/matieres.$subjectId'
@@ -73,6 +74,12 @@ const AuthenticatedProgressionRoute =
     path: '/progression',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedTableauDeBordRoute =
+  AuthenticatedTableauDeBordRouteImport.update({
+    id: '/tableau-de-bord',
+    path: '/tableau-de-bord',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedTachesRoute = AuthenticatedTachesRouteImport.update({
   id: '/taches',
   path: '/taches',
@@ -101,6 +108,7 @@ export interface FileRoutesByFullPath {
   '/parametres': typeof AuthenticatedParametresRoute
   '/planning': typeof AuthenticatedPlanningRoute
   '/progression': typeof AuthenticatedProgressionRoute
+  '/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
   '/taches': typeof AuthenticatedTachesRoute
   '/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
   '/matieres/': typeof AuthenticatedMatieresIndexRoute
@@ -115,6 +123,7 @@ export interface FileRoutesByTo {
   '/parametres': typeof AuthenticatedParametresRoute
   '/planning': typeof AuthenticatedPlanningRoute
   '/progression': typeof AuthenticatedProgressionRoute
+  '/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
   '/taches': typeof AuthenticatedTachesRoute
   '/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
   '/matieres': typeof AuthenticatedMatieresIndexRoute
@@ -131,6 +140,7 @@ export interface FileRoutesById {
   '/_authenticated/parametres': typeof AuthenticatedParametresRoute
   '/_authenticated/planning': typeof AuthenticatedPlanningRoute
   '/_authenticated/progression': typeof AuthenticatedProgressionRoute
+  '/_authenticated/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
   '/_authenticated/taches': typeof AuthenticatedTachesRoute
   '/_authenticated/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
   '/_authenticated/matieres/': typeof AuthenticatedMatieresIndexRoute
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/parametres'
     | '/planning'
     | '/progression'
+    | '/tableau-de-bord'
     | '/taches'
     | '/matieres/$subjectId'
     | '/matieres/'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/parametres'
     | '/planning'
     | '/progression'
+    | '/tableau-de-bord'
     | '/taches'
     | '/matieres/$subjectId'
     | '/matieres'
@@ -176,6 +188,7 @@ export interface FileRouteTypes {
     | '/_authenticated/parametres'
     | '/_authenticated/planning'
     | '/_authenticated/progression'
+    | '/_authenticated/tableau-de-bord'
     | '/_authenticated/taches'
     | '/_authenticated/matieres/$subjectId'
     | '/_authenticated/matieres/'
@@ -259,6 +272,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedProgressionRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/tableau-de-bord': {
+      id: '/_authenticated/tableau-de-bord'
+      path: '/tableau-de-bord'
+      fullPath: '/tableau-de-bord'
+      preLoaderRoute: typeof AuthenticatedTableauDeBordRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/taches': {
       id: '/_authenticated/taches'
       path: '/taches'
@@ -291,6 +311,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedParametresRoute: typeof AuthenticatedParametresRoute
   AuthenticatedPlanningRoute: typeof AuthenticatedPlanningRoute
   AuthenticatedProgressionRoute: typeof AuthenticatedProgressionRoute
+  AuthenticatedTableauDeBordRoute: typeof AuthenticatedTableauDeBordRoute
   AuthenticatedTachesRoute: typeof AuthenticatedTachesRoute
   AuthenticatedMatieresSubjectIdRoute: typeof AuthenticatedMatieresSubjectIdRoute
   AuthenticatedMatieresIndexRoute: typeof AuthenticatedMatieresIndexRoute
@@ -304,6 +325,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedParametresRoute: AuthenticatedParametresRoute,
   AuthenticatedPlanningRoute: AuthenticatedPlanningRoute,
   AuthenticatedProgressionRoute: AuthenticatedProgressionRoute,
+  AuthenticatedTableauDeBordRoute: AuthenticatedTableauDeBordRoute,
   AuthenticatedTachesRoute: AuthenticatedTachesRoute,
   AuthenticatedMatieresSubjectIdRoute: AuthenticatedMatieresSubjectIdRoute,
   AuthenticatedMatieresIndexRoute: AuthenticatedMatieresIndexRoute,
