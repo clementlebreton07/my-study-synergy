@@ -15,6 +15,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedCoursRouteImport } from './routes/_authenticated/cours'
 import { Route as AuthenticatedExamensRouteImport } from './routes/_authenticated/examens'
 import { Route as AuthenticatedExercicesRouteImport } from './routes/_authenticated/exercices'
+import { Route as AuthenticatedPlanningRouteImport } from './routes/_authenticated/planning'
 import { Route as AuthenticatedTachesRouteImport } from './routes/_authenticated/taches'
 import { Route as AuthenticatedMatieresIndexRouteImport } from './routes/_authenticated/matieres.index'
 import { Route as AuthenticatedMatieresSubjectIdRouteImport } from './routes/_authenticated/matieres.$subjectId'
@@ -48,6 +49,11 @@ const AuthenticatedExercicesRoute = AuthenticatedExercicesRouteImport.update({
   path: '/exercices',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPlanningRoute = AuthenticatedPlanningRouteImport.update({
+  id: '/planning',
+  path: '/planning',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedTachesRoute = AuthenticatedTachesRouteImport.update({
   id: '/taches',
   path: '/taches',
@@ -72,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/cours': typeof AuthenticatedCoursRoute
   '/examens': typeof AuthenticatedExamensRoute
   '/exercices': typeof AuthenticatedExercicesRoute
+  '/planning': typeof AuthenticatedPlanningRoute
   '/taches': typeof AuthenticatedTachesRoute
   '/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
   '/matieres/': typeof AuthenticatedMatieresIndexRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/cours': typeof AuthenticatedCoursRoute
   '/examens': typeof AuthenticatedExamensRoute
   '/exercices': typeof AuthenticatedExercicesRoute
+  '/planning': typeof AuthenticatedPlanningRoute
   '/taches': typeof AuthenticatedTachesRoute
   '/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
   '/matieres': typeof AuthenticatedMatieresIndexRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/_authenticated/cours': typeof AuthenticatedCoursRoute
   '/_authenticated/examens': typeof AuthenticatedExamensRoute
   '/_authenticated/exercices': typeof AuthenticatedExercicesRoute
+  '/_authenticated/planning': typeof AuthenticatedPlanningRoute
   '/_authenticated/taches': typeof AuthenticatedTachesRoute
   '/_authenticated/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
   '/_authenticated/matieres/': typeof AuthenticatedMatieresIndexRoute
@@ -106,6 +115,7 @@ export interface FileRouteTypes {
     | '/cours'
     | '/examens'
     | '/exercices'
+    | '/planning'
     | '/taches'
     | '/matieres/$subjectId'
     | '/matieres/'
@@ -116,6 +126,7 @@ export interface FileRouteTypes {
     | '/cours'
     | '/examens'
     | '/exercices'
+    | '/planning'
     | '/taches'
     | '/matieres/$subjectId'
     | '/matieres'
@@ -127,6 +138,7 @@ export interface FileRouteTypes {
     | '/_authenticated/cours'
     | '/_authenticated/examens'
     | '/_authenticated/exercices'
+    | '/_authenticated/planning'
     | '/_authenticated/taches'
     | '/_authenticated/matieres/$subjectId'
     | '/_authenticated/matieres/'
@@ -182,6 +194,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExercicesRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/planning': {
+      id: '/_authenticated/planning'
+      path: '/planning'
+      fullPath: '/planning'
+      preLoaderRoute: typeof AuthenticatedPlanningRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/taches': {
       id: '/_authenticated/taches'
       path: '/taches'
@@ -210,6 +229,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedCoursRoute: typeof AuthenticatedCoursRoute
   AuthenticatedExamensRoute: typeof AuthenticatedExamensRoute
   AuthenticatedExercicesRoute: typeof AuthenticatedExercicesRoute
+  AuthenticatedPlanningRoute: typeof AuthenticatedPlanningRoute
   AuthenticatedTachesRoute: typeof AuthenticatedTachesRoute
   AuthenticatedMatieresSubjectIdRoute: typeof AuthenticatedMatieresSubjectIdRoute
   AuthenticatedMatieresIndexRoute: typeof AuthenticatedMatieresIndexRoute
@@ -219,6 +239,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCoursRoute: AuthenticatedCoursRoute,
   AuthenticatedExamensRoute: AuthenticatedExamensRoute,
   AuthenticatedExercicesRoute: AuthenticatedExercicesRoute,
+  AuthenticatedPlanningRoute: AuthenticatedPlanningRoute,
   AuthenticatedTachesRoute: AuthenticatedTachesRoute,
   AuthenticatedMatieresSubjectIdRoute: AuthenticatedMatieresSubjectIdRoute,
   AuthenticatedMatieresIndexRoute: AuthenticatedMatieresIndexRoute,
