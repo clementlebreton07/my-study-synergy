@@ -154,7 +154,7 @@ function PlanningPage() {
   return (
     <AppShell
       title="Planning"
-      description="Semaine du " + ""
+      description="Vos cours et séances de révision, semaine par semaine."
       actions={
         <EventDialog
           trigger={
