@@ -1,9 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { CalendarDays, CheckCircle2, Clock, Plus, Trophy } from "lucide-react";
+import { useState } from "react";
+import { CalendarDays, CheckCircle2, Clock, Plus, Timer, Trophy } from "lucide-react";
 
 import { AppShell } from "@/components/AppShell";
+import { Field, OptionSelect, useSubjectOptions } from "@/components/common";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { useProfile, useRows, useSaveRow, type Row } from "@/lib/api";
 import {
@@ -44,6 +48,62 @@ function Card({ title, children, to }: { title: string; children: React.ReactNod
   );
 }
 
+function LogSessionDialog() {
+  const [open, setOpen] = useState(false);
+  const [minutes, setMinutes] = useState(30);
+  const [subjectId, setSubjectId] = useState<string | null>(null);
+  const subjects = useSubjectOptions();
+  const save = useSaveRow("study_sessions", "Séance enregistrée");
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline">
+          <Timer className="mr-2 size-4" />
+          Noter une séance
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle>Temps de travail</DialogTitle>
+        </DialogHeader>
+        <div className="grid gap-4">
+          <Field label="Durée (minutes)">
+            <Input
+              type="number"
+              min={5}
+              max={600}
+              step={5}
+              value={minutes}
+              onChange={(e) => setMinutes(Number(e.target.value))}
+            />
+          </Field>
+          <Field label="Matière">
+            <OptionSelect allowEmpty value={subjectId} options={subjects} onChange={setSubjectId} />
+          </Field>
+        </div>
+        <DialogFooter>
+          <Button
+            disabled={save.isPending}
+            onClick={() =>
+              save.mutate(
+                {
+                  session_date: today(),
+                  duration_minutes: Math.min(600, Math.max(5, minutes || 30)),
+                  subject_id: subjectId,
+                },
+                { onSuccess: () => setOpen(false) },
+              )
+            }
+          >
+            Enregistrer
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function DashboardPage() {
   const iso = today();
   const { data: profile } = useProfile();
@@ -74,12 +134,15 @@ function DashboardPage() {
       title={`Bonjour${profile?.first_name ? ` ${profile.first_name}` : ""} 👋`}
       description={formatLongDate(new Date())}
       actions={
-        <Button asChild>
-          <Link to="/taches">
-            <Plus className="mr-2 size-4" />
-            Nouvelle tâche
-          </Link>
-        </Button>
+        <div className="flex flex-wrap gap-2">
+          <LogSessionDialog />
+          <Button asChild>
+            <Link to="/taches">
+              <Plus className="mr-2 size-4" />
+              Nouvelle tâche
+            </Link>
+          </Button>
+        </div>
       }
     >
       <div className="grid gap-4 lg:grid-cols-3">
