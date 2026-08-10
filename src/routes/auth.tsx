@@ -41,8 +41,11 @@ function AuthPage() {
     setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
-    if (error) return toast.error(error.message);
-    navigate({ to: "/tableau-de-bord", replace: true });
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    void navigate({ to: "/tableau-de-bord", replace: true });
   }
 
   async function signUp(e: React.FormEvent) {
@@ -57,8 +60,14 @@ function AuthPage() {
       },
     });
     setLoading(false);
-    if (error) return toast.error(error.message);
-    if (data.session) return navigate({ to: "/tableau-de-bord", replace: true });
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    if (data.session) {
+      void navigate({ to: "/tableau-de-bord", replace: true });
+      return;
+    }
     setEmailSent(true);
   }
 
@@ -69,10 +78,11 @@ function AuthPage() {
     });
     if (result.error) {
       setLoading(false);
-      return toast.error("Connexion Google impossible pour le moment.");
+      toast.error("Connexion Google impossible pour le moment.");
+      return;
     }
     if (result.redirected) return;
-    navigate({ to: "/tableau-de-bord", replace: true });
+    void navigate({ to: "/tableau-de-bord", replace: true });
   }
 
   return (
