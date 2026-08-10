@@ -12,6 +12,8 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedExamensRouteImport } from './routes/_authenticated/examens'
+import { Route as AuthenticatedExercicesRouteImport } from './routes/_authenticated/exercices'
 import { Route as AuthenticatedTachesRouteImport } from './routes/_authenticated/taches'
 import { Route as AuthenticatedMatieresIndexRouteImport } from './routes/_authenticated/matieres.index'
 import { Route as AuthenticatedMatieresSubjectIdRouteImport } from './routes/_authenticated/matieres.$subjectId'
@@ -29,6 +31,16 @@ const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
   getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedExamensRoute = AuthenticatedExamensRouteImport.update({
+  id: '/examens',
+  path: '/examens',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedExercicesRoute = AuthenticatedExercicesRouteImport.update({
+  id: '/exercices',
+  path: '/exercices',
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedTachesRoute = AuthenticatedTachesRouteImport.update({
   id: '/taches',
@@ -51,6 +63,8 @@ const AuthenticatedMatieresSubjectIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/examens': typeof AuthenticatedExamensRoute
+  '/exercices': typeof AuthenticatedExercicesRoute
   '/taches': typeof AuthenticatedTachesRoute
   '/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
   '/matieres/': typeof AuthenticatedMatieresIndexRoute
@@ -58,6 +72,8 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
+  '/examens': typeof AuthenticatedExamensRoute
+  '/exercices': typeof AuthenticatedExercicesRoute
   '/taches': typeof AuthenticatedTachesRoute
   '/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
   '/matieres': typeof AuthenticatedMatieresIndexRoute
@@ -67,20 +83,38 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
+  '/_authenticated/examens': typeof AuthenticatedExamensRoute
+  '/_authenticated/exercices': typeof AuthenticatedExercicesRoute
   '/_authenticated/taches': typeof AuthenticatedTachesRoute
   '/_authenticated/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
   '/_authenticated/matieres/': typeof AuthenticatedMatieresIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/taches' | '/matieres/$subjectId' | '/matieres/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/examens'
+    | '/exercices'
+    | '/taches'
+    | '/matieres/$subjectId'
+    | '/matieres/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/taches' | '/matieres/$subjectId' | '/matieres'
+  to:
+    | '/'
+    | '/auth'
+    | '/examens'
+    | '/exercices'
+    | '/taches'
+    | '/matieres/$subjectId'
+    | '/matieres'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
+    | '/_authenticated/examens'
+    | '/_authenticated/exercices'
     | '/_authenticated/taches'
     | '/_authenticated/matieres/$subjectId'
     | '/_authenticated/matieres/'
@@ -115,6 +149,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/examens': {
+      id: '/_authenticated/examens'
+      path: '/examens'
+      fullPath: '/examens'
+      preLoaderRoute: typeof AuthenticatedExamensRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/exercices': {
+      id: '/_authenticated/exercices'
+      path: '/exercices'
+      fullPath: '/exercices'
+      preLoaderRoute: typeof AuthenticatedExercicesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/taches': {
       id: '/_authenticated/taches'
       path: '/taches'
@@ -140,12 +188,16 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedExamensRoute: typeof AuthenticatedExamensRoute
+  AuthenticatedExercicesRoute: typeof AuthenticatedExercicesRoute
   AuthenticatedTachesRoute: typeof AuthenticatedTachesRoute
   AuthenticatedMatieresSubjectIdRoute: typeof AuthenticatedMatieresSubjectIdRoute
   AuthenticatedMatieresIndexRoute: typeof AuthenticatedMatieresIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedExamensRoute: AuthenticatedExamensRoute,
+  AuthenticatedExercicesRoute: AuthenticatedExercicesRoute,
   AuthenticatedTachesRoute: AuthenticatedTachesRoute,
   AuthenticatedMatieresSubjectIdRoute: AuthenticatedMatieresSubjectIdRoute,
   AuthenticatedMatieresIndexRoute: AuthenticatedMatieresIndexRoute,
