@@ -56,12 +56,16 @@ export function useSaveRow(table: TableName, successMessage = "Enregistré") {
   return useMutation({
     mutationFn: async (values: Row) => {
       const user_id = await currentUserId();
-      const payload = { ...values, user_id };
-      if (values.id) {
-        const { id, ...rest } = payload;
-        const { error } = await (supabase.from(table as any) as any).update(rest).eq("id", id);
+      const payload: Row = { ...values, user_id };
+      const existingId = payload["id"] as string | undefined;
+      if (existingId) {
+        const rest = { ...payload };
+        delete rest["id"];
+        const { error } = await (supabase.from(table as any) as any)
+          .update(rest)
+          .eq("id", existingId);
         if (error) throw error;
-        return id as string;
+        return existingId;
       }
       const { data, error } = await (supabase.from(table as any) as any)
         .insert(payload)
@@ -122,7 +126,7 @@ export function useSaveProfile() {
   return useMutation({
     mutationFn: async (values: Row) => {
       const id = await currentUserId();
-      const { error } = await supabase.from("profiles").update(values).eq("id", id);
+      const { error } = await (supabase.from("profiles") as any).update(values).eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {

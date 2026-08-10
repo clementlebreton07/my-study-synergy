@@ -118,8 +118,8 @@ export function hhmm(time?: string | null) {
 }
 
 export function minutesFromTime(time: string) {
-  const [h, m] = time.split(":").map(Number);
-  return h * 60 + m;
+  const parts = time.split(":").map(Number);
+  return (parts[0] ?? 0) * 60 + (parts[1] ?? 0);
 }
 
 export function timeFromMinutes(total: number) {
