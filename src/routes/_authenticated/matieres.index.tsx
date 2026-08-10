@@ -12,7 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useRows, useSaveRow, type Row } from "@/lib/api";
 import { daysUntil, formatShortDate, masteryWeight } from "@/lib/study";
 
-export const Route = createFileRoute("/_authenticated/matieres")({
+export const Route = createFileRoute("/_authenticated/matieres/")({
   head: () => ({
     meta: [
       { title: "Mes matières — StudyOS" },
