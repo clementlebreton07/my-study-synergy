@@ -14,6 +14,53 @@ export type Database = {
   }
   public: {
     Tables: {
+      assessments: {
+        Row: {
+          created_at: string
+          due_date: string | null
+          grade: number | null
+          id: string
+          max_grade: number
+          subject_id: string | null
+          title: string
+          updated_at: string
+          user_id: string
+          weight: number
+        }
+        Insert: {
+          created_at?: string
+          due_date?: string | null
+          grade?: number | null
+          id?: string
+          max_grade?: number
+          subject_id?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+          weight?: number
+        }
+        Update: {
+          created_at?: string
+          due_date?: string | null
+          grade?: number | null
+          id?: string
+          max_grade?: number
+          subject_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessments_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       availabilities: {
         Row: {
           created_at: string
@@ -88,6 +135,7 @@ export type Database = {
       documents: {
         Row: {
           ai_data: Json | null
+          ai_notes: string | null
           ai_status: string
           ai_summary: string | null
           chapter_id: string | null
@@ -104,6 +152,7 @@ export type Database = {
         }
         Insert: {
           ai_data?: Json | null
+          ai_notes?: string | null
           ai_status?: string
           ai_summary?: string | null
           chapter_id?: string | null
@@ -120,6 +169,7 @@ export type Database = {
         }
         Update: {
           ai_data?: Json | null
+          ai_notes?: string | null
           ai_status?: string
           ai_summary?: string | null
           chapter_id?: string | null
@@ -323,9 +373,14 @@ export type Database = {
           box: number
           chapter_id: string | null
           created_at: string
+          document_id: string | null
+          ease: number
           id: string
+          interval_days: number
+          last_review: string | null
           next_review: string
           question: string
+          subject_id: string | null
           user_id: string
         }
         Insert: {
@@ -333,9 +388,14 @@ export type Database = {
           box?: number
           chapter_id?: string | null
           created_at?: string
+          document_id?: string | null
+          ease?: number
           id?: string
+          interval_days?: number
+          last_review?: string | null
           next_review?: string
           question: string
+          subject_id?: string | null
           user_id: string
         }
         Update: {
@@ -343,9 +403,14 @@ export type Database = {
           box?: number
           chapter_id?: string | null
           created_at?: string
+          document_id?: string | null
+          ease?: number
           id?: string
+          interval_days?: number
+          last_review?: string | null
           next_review?: string
           question?: string
+          subject_id?: string | null
           user_id?: string
         }
         Relationships: [
@@ -354,6 +419,20 @@ export type Database = {
             columns: ["chapter_id"]
             isOneToOne: false
             referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flashcards_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "flashcards_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
             referencedColumns: ["id"]
           },
         ]
@@ -422,6 +501,114 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      quiz_attempts: {
+        Row: {
+          answers: Json
+          completed_at: string
+          created_at: string
+          duration_seconds: number
+          id: string
+          quiz_id: string
+          score: number
+          total: number
+          user_id: string
+        }
+        Insert: {
+          answers?: Json
+          completed_at?: string
+          created_at?: string
+          duration_seconds?: number
+          id?: string
+          quiz_id: string
+          score?: number
+          total?: number
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          completed_at?: string
+          created_at?: string
+          duration_seconds?: number
+          id?: string
+          quiz_id?: string
+          score?: number
+          total?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_attempts_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quizzes: {
+        Row: {
+          chapter_id: string | null
+          created_at: string
+          document_id: string | null
+          duration_minutes: number | null
+          id: string
+          mode: string
+          questions: Json
+          subject_id: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          chapter_id?: string | null
+          created_at?: string
+          document_id?: string | null
+          duration_minutes?: number | null
+          id?: string
+          mode?: string
+          questions?: Json
+          subject_id?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          chapter_id?: string | null
+          created_at?: string
+          document_id?: string | null
+          duration_minutes?: number | null
+          id?: string
+          mode?: string
+          questions?: Json
+          subject_id?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quizzes_chapter_id_fkey"
+            columns: ["chapter_id"]
+            isOneToOne: false
+            referencedRelation: "chapters"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quizzes_document_id_fkey"
+            columns: ["document_id"]
+            isOneToOne: false
+            referencedRelation: "documents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quizzes_subject_id_fkey"
+            columns: ["subject_id"]
+            isOneToOne: false
+            referencedRelation: "subjects"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       study_sessions: {
         Row: {
