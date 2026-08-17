@@ -198,7 +198,7 @@ export const importSyllabus = createServerFn({ method: "POST" })
           subject_id: subjectId,
           title: a.title,
           weight: Number(a.weight) || 0,
-          due_date: isDate(a.due_date) ? a.due_date : null,
+          due_date: isDate(a.due_date) ? (a.due_date as string) : null,
         })),
       );
       if (error) throw new Error(error.message);
@@ -316,7 +316,7 @@ export const generateStudyPlan = createServerFn({ method: "POST" })
         planned_date: s.planned_date,
         due_date: s.planned_date,
         estimated_minutes: Math.min(240, Math.max(10, Number(s.estimated_minutes) || 45)),
-        priority: priorities.has(s.priority ?? "") ? s.priority : "normal",
+        priority: priorities.has(s.priority ?? "") ? (s.priority as string) : "normal",
         subject_id: s.subject_id && subjectIds.has(s.subject_id) ? s.subject_id : null,
         chapter_id: s.chapter_id && chapterIds.has(s.chapter_id) ? s.chapter_id : null,
         notes: s.reason ?? null,
