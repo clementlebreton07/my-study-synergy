@@ -24,6 +24,7 @@ import { Route as AuthenticatedTableauDeBordRouteImport } from './routes/_authen
 import { Route as AuthenticatedTachesRouteImport } from './routes/_authenticated/taches'
 import { Route as AuthenticatedMatieresIndexRouteImport } from './routes/_authenticated/matieres.index'
 import { Route as AuthenticatedMatieresSubjectIdRouteImport } from './routes/_authenticated/matieres.$subjectId'
+import { Route as AuthenticatedQuizIndexRouteImport } from './routes/_authenticated/quiz.index'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -103,6 +104,11 @@ const AuthenticatedMatieresSubjectIdRoute =
     path: '/matieres/$subjectId',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedQuizIndexRoute = AuthenticatedQuizIndexRouteImport.update({
+  id: '/quiz/',
+  path: '/quiz/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -119,6 +125,7 @@ export interface FileRoutesByFullPath {
   '/taches': typeof AuthenticatedTachesRoute
   '/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
   '/matieres/': typeof AuthenticatedMatieresIndexRoute
+  '/quiz/': typeof AuthenticatedQuizIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -135,6 +142,7 @@ export interface FileRoutesByTo {
   '/taches': typeof AuthenticatedTachesRoute
   '/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
   '/matieres': typeof AuthenticatedMatieresIndexRoute
+  '/quiz': typeof AuthenticatedQuizIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -153,6 +161,7 @@ export interface FileRoutesById {
   '/_authenticated/taches': typeof AuthenticatedTachesRoute
   '/_authenticated/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
   '/_authenticated/matieres/': typeof AuthenticatedMatieresIndexRoute
+  '/_authenticated/quiz/': typeof AuthenticatedQuizIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/taches'
     | '/matieres/$subjectId'
     | '/matieres/'
+    | '/quiz/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/taches'
     | '/matieres/$subjectId'
     | '/matieres'
+    | '/quiz'
   id:
     | '__root__'
     | '/'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/_authenticated/taches'
     | '/_authenticated/matieres/$subjectId'
     | '/_authenticated/matieres/'
+    | '/_authenticated/quiz/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -319,6 +331,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedMatieresSubjectIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/quiz/': {
+      id: '/_authenticated/quiz/'
+      path: '/quiz'
+      fullPath: '/quiz/'
+      preLoaderRoute: typeof AuthenticatedQuizIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -335,6 +354,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTachesRoute: typeof AuthenticatedTachesRoute
   AuthenticatedMatieresSubjectIdRoute: typeof AuthenticatedMatieresSubjectIdRoute
   AuthenticatedMatieresIndexRoute: typeof AuthenticatedMatieresIndexRoute
+  AuthenticatedQuizIndexRoute: typeof AuthenticatedQuizIndexRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -350,6 +370,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTachesRoute: AuthenticatedTachesRoute,
   AuthenticatedMatieresSubjectIdRoute: AuthenticatedMatieresSubjectIdRoute,
   AuthenticatedMatieresIndexRoute: AuthenticatedMatieresIndexRoute,
+  AuthenticatedQuizIndexRoute: AuthenticatedQuizIndexRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
