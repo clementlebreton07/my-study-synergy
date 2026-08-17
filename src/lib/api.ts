@@ -14,7 +14,10 @@ export type TableName =
   | "availabilities"
   | "study_sessions"
   | "notes"
-  | "flashcards";
+  | "flashcards"
+  | "quizzes"
+  | "quiz_attempts"
+  | "assessments";
 
 export type Row = Record<string, any>;
 
