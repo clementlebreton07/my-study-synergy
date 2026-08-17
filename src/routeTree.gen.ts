@@ -25,6 +25,7 @@ import { Route as AuthenticatedTachesRouteImport } from './routes/_authenticated
 import { Route as AuthenticatedMatieresIndexRouteImport } from './routes/_authenticated/matieres.index'
 import { Route as AuthenticatedMatieresSubjectIdRouteImport } from './routes/_authenticated/matieres.$subjectId'
 import { Route as AuthenticatedQuizIndexRouteImport } from './routes/_authenticated/quiz.index'
+import { Route as AuthenticatedQuizQuizIdRouteImport } from './routes/_authenticated/quiz.$quizId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -109,6 +110,11 @@ const AuthenticatedQuizIndexRoute = AuthenticatedQuizIndexRouteImport.update({
   path: '/quiz/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedQuizQuizIdRoute = AuthenticatedQuizQuizIdRouteImport.update({
+  id: '/quiz/$quizId',
+  path: '/quiz/$quizId',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -124,6 +130,7 @@ export interface FileRoutesByFullPath {
   '/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
   '/taches': typeof AuthenticatedTachesRoute
   '/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
+  '/quiz/$quizId': typeof AuthenticatedQuizQuizIdRoute
   '/matieres/': typeof AuthenticatedMatieresIndexRoute
   '/quiz/': typeof AuthenticatedQuizIndexRoute
 }
@@ -141,6 +148,7 @@ export interface FileRoutesByTo {
   '/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
   '/taches': typeof AuthenticatedTachesRoute
   '/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
+  '/quiz/$quizId': typeof AuthenticatedQuizQuizIdRoute
   '/matieres': typeof AuthenticatedMatieresIndexRoute
   '/quiz': typeof AuthenticatedQuizIndexRoute
 }
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   '/_authenticated/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
   '/_authenticated/taches': typeof AuthenticatedTachesRoute
   '/_authenticated/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
+  '/_authenticated/quiz/$quizId': typeof AuthenticatedQuizQuizIdRoute
   '/_authenticated/matieres/': typeof AuthenticatedMatieresIndexRoute
   '/_authenticated/quiz/': typeof AuthenticatedQuizIndexRoute
 }
@@ -179,6 +188,7 @@ export interface FileRouteTypes {
     | '/tableau-de-bord'
     | '/taches'
     | '/matieres/$subjectId'
+    | '/quiz/$quizId'
     | '/matieres/'
     | '/quiz/'
   fileRoutesByTo: FileRoutesByTo
@@ -196,6 +206,7 @@ export interface FileRouteTypes {
     | '/tableau-de-bord'
     | '/taches'
     | '/matieres/$subjectId'
+    | '/quiz/$quizId'
     | '/matieres'
     | '/quiz'
   id:
@@ -214,6 +225,7 @@ export interface FileRouteTypes {
     | '/_authenticated/tableau-de-bord'
     | '/_authenticated/taches'
     | '/_authenticated/matieres/$subjectId'
+    | '/_authenticated/quiz/$quizId'
     | '/_authenticated/matieres/'
     | '/_authenticated/quiz/'
   fileRoutesById: FileRoutesById
@@ -338,6 +350,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedQuizIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/quiz/$quizId': {
+      id: '/_authenticated/quiz/$quizId'
+      path: '/quiz/$quizId'
+      fullPath: '/quiz/$quizId'
+      preLoaderRoute: typeof AuthenticatedQuizQuizIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -353,6 +372,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedTableauDeBordRoute: typeof AuthenticatedTableauDeBordRoute
   AuthenticatedTachesRoute: typeof AuthenticatedTachesRoute
   AuthenticatedMatieresSubjectIdRoute: typeof AuthenticatedMatieresSubjectIdRoute
+  AuthenticatedQuizQuizIdRoute: typeof AuthenticatedQuizQuizIdRoute
   AuthenticatedMatieresIndexRoute: typeof AuthenticatedMatieresIndexRoute
   AuthenticatedQuizIndexRoute: typeof AuthenticatedQuizIndexRoute
 }
@@ -369,6 +389,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedTableauDeBordRoute: AuthenticatedTableauDeBordRoute,
   AuthenticatedTachesRoute: AuthenticatedTachesRoute,
   AuthenticatedMatieresSubjectIdRoute: AuthenticatedMatieresSubjectIdRoute,
+  AuthenticatedQuizQuizIdRoute: AuthenticatedQuizQuizIdRoute,
   AuthenticatedMatieresIndexRoute: AuthenticatedMatieresIndexRoute,
   AuthenticatedQuizIndexRoute: AuthenticatedQuizIndexRoute,
 }
