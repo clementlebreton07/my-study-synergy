@@ -20,6 +20,7 @@ import { Route as AuthenticatedParametresRouteImport } from './routes/_authentic
 import { Route as AuthenticatedPlanningRouteImport } from './routes/_authenticated/planning'
 import { Route as AuthenticatedProgressionRouteImport } from './routes/_authenticated/progression'
 import { Route as AuthenticatedRevisionsRouteImport } from './routes/_authenticated/revisions'
+import { Route as AuthenticatedSyllabusRouteImport } from './routes/_authenticated/syllabus'
 import { Route as AuthenticatedTableauDeBordRouteImport } from './routes/_authenticated/tableau-de-bord'
 import { Route as AuthenticatedTachesRouteImport } from './routes/_authenticated/taches'
 import { Route as AuthenticatedMatieresIndexRouteImport } from './routes/_authenticated/matieres.index'
@@ -82,6 +83,11 @@ const AuthenticatedRevisionsRoute = AuthenticatedRevisionsRouteImport.update({
   path: '/revisions',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedSyllabusRoute = AuthenticatedSyllabusRouteImport.update({
+  id: '/syllabus',
+  path: '/syllabus',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedTableauDeBordRoute =
   AuthenticatedTableauDeBordRouteImport.update({
     id: '/tableau-de-bord',
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/planning': typeof AuthenticatedPlanningRoute
   '/progression': typeof AuthenticatedProgressionRoute
   '/revisions': typeof AuthenticatedRevisionsRoute
+  '/syllabus': typeof AuthenticatedSyllabusRoute
   '/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
   '/taches': typeof AuthenticatedTachesRoute
   '/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
@@ -145,6 +152,7 @@ export interface FileRoutesByTo {
   '/planning': typeof AuthenticatedPlanningRoute
   '/progression': typeof AuthenticatedProgressionRoute
   '/revisions': typeof AuthenticatedRevisionsRoute
+  '/syllabus': typeof AuthenticatedSyllabusRoute
   '/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
   '/taches': typeof AuthenticatedTachesRoute
   '/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
@@ -165,6 +173,7 @@ export interface FileRoutesById {
   '/_authenticated/planning': typeof AuthenticatedPlanningRoute
   '/_authenticated/progression': typeof AuthenticatedProgressionRoute
   '/_authenticated/revisions': typeof AuthenticatedRevisionsRoute
+  '/_authenticated/syllabus': typeof AuthenticatedSyllabusRoute
   '/_authenticated/tableau-de-bord': typeof AuthenticatedTableauDeBordRoute
   '/_authenticated/taches': typeof AuthenticatedTachesRoute
   '/_authenticated/matieres/$subjectId': typeof AuthenticatedMatieresSubjectIdRoute
@@ -185,6 +194,7 @@ export interface FileRouteTypes {
     | '/planning'
     | '/progression'
     | '/revisions'
+    | '/syllabus'
     | '/tableau-de-bord'
     | '/taches'
     | '/matieres/$subjectId'
@@ -203,6 +213,7 @@ export interface FileRouteTypes {
     | '/planning'
     | '/progression'
     | '/revisions'
+    | '/syllabus'
     | '/tableau-de-bord'
     | '/taches'
     | '/matieres/$subjectId'
@@ -222,6 +233,7 @@ export interface FileRouteTypes {
     | '/_authenticated/planning'
     | '/_authenticated/progression'
     | '/_authenticated/revisions'
+    | '/_authenticated/syllabus'
     | '/_authenticated/tableau-de-bord'
     | '/_authenticated/taches'
     | '/_authenticated/matieres/$subjectId'
@@ -315,6 +327,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedRevisionsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/syllabus': {
+      id: '/_authenticated/syllabus'
+      path: '/syllabus'
+      fullPath: '/syllabus'
+      preLoaderRoute: typeof AuthenticatedSyllabusRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/tableau-de-bord': {
       id: '/_authenticated/tableau-de-bord'
       path: '/tableau-de-bord'
@@ -369,6 +388,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPlanningRoute: typeof AuthenticatedPlanningRoute
   AuthenticatedProgressionRoute: typeof AuthenticatedProgressionRoute
   AuthenticatedRevisionsRoute: typeof AuthenticatedRevisionsRoute
+  AuthenticatedSyllabusRoute: typeof AuthenticatedSyllabusRoute
   AuthenticatedTableauDeBordRoute: typeof AuthenticatedTableauDeBordRoute
   AuthenticatedTachesRoute: typeof AuthenticatedTachesRoute
   AuthenticatedMatieresSubjectIdRoute: typeof AuthenticatedMatieresSubjectIdRoute
@@ -386,6 +406,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPlanningRoute: AuthenticatedPlanningRoute,
   AuthenticatedProgressionRoute: AuthenticatedProgressionRoute,
   AuthenticatedRevisionsRoute: AuthenticatedRevisionsRoute,
+  AuthenticatedSyllabusRoute: AuthenticatedSyllabusRoute,
   AuthenticatedTableauDeBordRoute: AuthenticatedTableauDeBordRoute,
   AuthenticatedTachesRoute: AuthenticatedTachesRoute,
   AuthenticatedMatieresSubjectIdRoute: AuthenticatedMatieresSubjectIdRoute,
