@@ -1,17 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Download, FileText, Trash2, UploadCloud } from "lucide-react";
+import { Download, FileText, Layers, Loader2, Sparkles, Target, Trash2, UploadCloud } from "lucide-react";
 import { toast } from "sonner";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 
 import { AppShell } from "@/components/AppShell";
 import { DocumentUpload } from "@/components/DocumentUpload";
 import { EmptyState, OptionSelect, useSubjectOptions } from "@/components/common";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useRows, type Row } from "@/lib/api";
 import { supabase } from "@/integrations/supabase/client";
 import { DOC_KINDS } from "@/lib/study";
+import { analyzeDocument, generateFlashcards, generateQuiz } from "@/lib/ai.functions";
 
 export const Route = createFileRoute("/_authenticated/cours")({
   head: () => ({
@@ -25,6 +28,98 @@ export const Route = createFileRoute("/_authenticated/cours")({
   component: CoursesPage,
 });
 
+function AiActions({ doc }: { doc: Row }) {
+  const queryClient = useQueryClient();
+  const analyze = useServerFn(analyzeDocument);
+  const cards = useServerFn(generateFlashcards);
+  const quiz = useServerFn(generateQuiz);
+  const documentId = doc["id"] as string;
+
+  const analyzeMutation = useMutation({
+    mutationFn: () => analyze({ data: { documentId } }),
+    onSuccess: async () => {
+      await queryClient.invalidateQueries();
+      toast.success("Notes de cours générées");
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const cardsMutation = useMutation({
+    mutationFn: () => cards({ data: { documentId, count: 12 } }),
+    onSuccess: async (result) => {
+      await queryClient.invalidateQueries();
+      toast.success(`${result.created} fiches ajoutées aux révisions`);
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const quizMutation = useMutation({
+    mutationFn: () => quiz({ data: { documentId, count: 10, mode: "practice", durationMinutes: null } }),
+    onSuccess: async (result) => {
+      await queryClient.invalidateQueries();
+      toast.success(`Quiz de ${result.count} questions créé`);
+    },
+    onError: (error: Error) => toast.error(error.message),
+  });
+
+  const busy = analyzeMutation.isPending || cardsMutation.isPending || quizMutation.isPending;
+
+  return (
+    <div className="flex flex-wrap gap-2">
+      <Button variant="outline" size="sm" disabled={busy} onClick={() => analyzeMutation.mutate()}>
+        {analyzeMutation.isPending ? (
+          <Loader2 className="mr-2 size-4 animate-spin" />
+        ) : (
+          <Sparkles className="mr-2 size-4" />
+        )}
+        Analyser
+      </Button>
+      <Button variant="outline" size="sm" disabled={busy} onClick={() => cardsMutation.mutate()}>
+        {cardsMutation.isPending ? (
+          <Loader2 className="mr-2 size-4 animate-spin" />
+        ) : (
+          <Layers className="mr-2 size-4" />
+        )}
+        Fiches IA
+      </Button>
+      <Button variant="outline" size="sm" disabled={busy} onClick={() => quizMutation.mutate()}>
+        {quizMutation.isPending ? (
+          <Loader2 className="mr-2 size-4 animate-spin" />
+        ) : (
+          <Target className="mr-2 size-4" />
+        )}
+        Quiz
+      </Button>
+    </div>
+  );
+}
+
+function NotesDialog({ doc, onClose }: { doc: Row | null; onClose: () => void }) {
+  const keyPoints = ((doc?.["ai_data"] as Row | null)?.["key_points"] as string[] | undefined) ?? [];
+  return (
+    <Dialog open={!!doc} onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>{doc?.["name"] as string}</DialogTitle>
+        </DialogHeader>
+        {doc?.["ai_summary"] && (
+          <p className="rounded-xl bg-secondary p-4 text-sm">{doc["ai_summary"] as string}</p>
+        )}
+        {keyPoints.length > 0 && (
+          <ul className="list-disc space-y-1 pl-5 text-sm">
+            {keyPoints.map((point) => (
+              <li key={point}>{point}</li>
+            ))}
+          </ul>
+        )}
+        <div className="whitespace-pre-wrap text-sm leading-relaxed">
+          {(doc?.["ai_notes"] as string | null) ?? "Aucune note générée."}
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function CoursesPage() {
   const { data: documents = [], isLoading } = useRows<Row>("documents", {
     order: { column: "created_at", ascending: false },
@@ -32,6 +127,7 @@ function CoursesPage() {
   const { data: chapters = [] } = useRows<Row>("chapters");
   const subjects = useSubjectOptions();
   const [subjectFilter, setSubjectFilter] = useState<string | null>(null);
+  const [notesDoc, setNotesDoc] = useState<Row | null>(null);
   const queryClient = useQueryClient();
 
   const filtered = subjectFilter
@@ -85,6 +181,8 @@ function CoursesPage() {
         />
       </div>
 
+      <NotesDialog doc={notesDoc} onClose={() => setNotesDoc(null)} />
+
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Chargement…</p>
       ) : filtered.length === 0 ? (
@@ -99,9 +197,9 @@ function CoursesPage() {
             const subject = subjects.find((s) => s.value === doc["subject_id"]);
             const chapter = chapters.find((c) => c["id"] === doc["chapter_id"]);
             return (
-              <div key={doc["id"] as string} className="surface flex items-center gap-4 p-4">
+              <div key={doc["id"] as string} className="surface flex flex-wrap items-center gap-4 p-4">
                 <FileText className="size-5 shrink-0 text-primary" />
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 flex-1 basis-64">
                   <p className="truncate font-medium">{doc["name"] as string}</p>
                   <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                     {subject && <Badge variant="outline">{subject.label}</Badge>}
@@ -112,9 +210,20 @@ function CoursesPage() {
                     <span>
                       {Math.max(1, Math.round(Number(doc["size_bytes"] ?? 0) / 1024))} Ko
                     </span>
-                    <span className="text-muted-foreground">Analyse IA : non activée</span>
+                    {doc["ai_notes"] ? (
+                      <button
+                        type="button"
+                        className="font-medium text-primary underline-offset-2 hover:underline"
+                        onClick={() => setNotesDoc(doc)}
+                      >
+                        Voir les notes IA
+                      </button>
+                    ) : (
+                      <span>Pas encore analysé</span>
+                    )}
                   </div>
                 </div>
+                <AiActions doc={doc} />
                 <Button variant="ghost" size="icon" aria-label="Ouvrir" onClick={() => openDocument(doc)}>
                   <Download className="size-4" />
                 </Button>
