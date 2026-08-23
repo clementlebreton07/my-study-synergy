@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Download, FileText, Layers, Loader2, Sparkles, Target, Trash2, UploadCloud } from "lucide-react";
+import { Eye, FileText, Layers, Loader2, Sparkles, Target, Trash2, UploadCloud } from "lucide-react";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 
 import { AppShell } from "@/components/AppShell";
 import { DocumentUpload } from "@/components/DocumentUpload";
+import { DocumentViewer } from "@/components/DocumentViewer";
 import { EmptyState, OptionSelect, useSubjectOptions } from "@/components/common";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import { useRows, type Row } from "@/lib/api";
 import { supabase } from "@/integrations/supabase/client";
 import { DOC_KINDS } from "@/lib/study";
 import { analyzeDocument, generateFlashcards, generateQuiz } from "@/lib/ai.functions";
+
 
 export const Route = createFileRoute("/_authenticated/cours")({
   head: () => ({
