@@ -130,22 +130,14 @@ function CoursesPage() {
   const subjects = useSubjectOptions();
   const [subjectFilter, setSubjectFilter] = useState<string | null>(null);
   const [notesDoc, setNotesDoc] = useState<Row | null>(null);
+  const [viewDoc, setViewDoc] = useState<Row | null>(null);
   const queryClient = useQueryClient();
 
   const filtered = subjectFilter
     ? documents.filter((d) => d["subject_id"] === subjectFilter)
     : documents;
 
-  async function openDocument(doc: Row) {
-    const { data, error } = await supabase.storage
-      .from("documents")
-      .createSignedUrl(doc["storage_path"] as string, 60);
-    if (error || !data) {
-      toast.error("Fichier introuvable");
-      return;
-    }
-    window.open(data.signedUrl, "_blank", "noopener");
-  }
+
 
   async function removeDocument(doc: Row) {
     await supabase.storage.from("documents").remove([doc["storage_path"] as string]);
