@@ -31,46 +31,65 @@ import { cn } from "@/lib/utils";
 
 export const NAV = [
   { to: "/tableau-de-bord", label: "Accueil", icon: Home },
-  { to: "/matieres", label: "Mes matières", icon: BookOpen },
   { to: "/cours", label: "Mes cours", icon: FileText },
+  { to: "/matieres", label: "Mes matières", icon: BookOpen },
+  { to: "/taches", label: "Tâches", icon: CheckSquare },
+  { to: "/planning", label: "Planning", icon: CalendarDays },
   { to: "/revisions", label: "Révisions", icon: Layers },
+  { to: "/assistant", label: "Assistant IA", icon: Sparkles },
+] as const;
+
+export const NAV_MORE = [
   { to: "/quiz", label: "Quiz & examens blancs", icon: Target },
   { to: "/exercices", label: "Exercices", icon: PencilRuler },
-  { to: "/planning", label: "Planning", icon: CalendarDays },
-  { to: "/taches", label: "Tâches", icon: CheckSquare },
   { to: "/examens", label: "Examens", icon: Trophy },
   { to: "/syllabus", label: "Syllabus & moyenne", icon: ScrollText },
   { to: "/progression", label: "Progression", icon: LineChart },
-  { to: "/assistant", label: "Assistant IA", icon: Sparkles },
   { to: "/parametres", label: "Paramètres", icon: Settings },
 ] as const;
 
 function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const [showMore, setShowMore] = useState(
+    NAV_MORE.some((item) => pathname === item.to || pathname.startsWith(item.to + "/")),
+  );
+
+  const renderItem = (item: { to: string; label: string; icon: typeof Home }) => {
+    const active = pathname === item.to || pathname.startsWith(item.to + "/");
+    return (
+      <Link
+        key={item.to}
+        to={item.to}
+        onClick={onNavigate}
+        className={cn(
+          "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+          active
+            ? "bg-sidebar-primary text-sidebar-primary-foreground"
+            : "text-sidebar-foreground hover:bg-sidebar-accent",
+        )}
+      >
+        <item.icon className="size-4 shrink-0" />
+        {item.label}
+      </Link>
+    );
+  };
+
   return (
     <nav className="flex flex-col gap-1">
-      {NAV.map((item) => {
-        const active = pathname === item.to || pathname.startsWith(item.to + "/");
-        return (
-          <Link
-            key={item.to}
-            to={item.to}
-            onClick={onNavigate}
-            className={cn(
-              "flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors",
-              active
-                ? "bg-sidebar-primary text-sidebar-primary-foreground"
-                : "text-sidebar-foreground hover:bg-sidebar-accent",
-            )}
-          >
-            <item.icon className="size-4 shrink-0" />
-            {item.label}
-          </Link>
-        );
-      })}
+      {NAV.map(renderItem)}
+      <button
+        type="button"
+        onClick={() => setShowMore((v) => !v)}
+        className="mt-2 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-sidebar-accent"
+      >
+        <ChevronDown className={cn("size-4 shrink-0 transition-transform", showMore && "rotate-180")} />
+        Plus d'outils
+      </button>
+      {showMore && NAV_MORE.map(renderItem)}
     </nav>
   );
 }
+
 
 export function AppShell({
   title,
