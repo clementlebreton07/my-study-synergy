@@ -193,35 +193,36 @@ function CoursesPage() {
             const chapter = chapters.find((c) => c["id"] === doc["chapter_id"]);
             return (
               <div key={doc["id"] as string} className="surface flex flex-wrap items-center gap-4 p-4">
-                <FileText className="size-5 shrink-0 text-primary" />
-                <div className="min-w-0 flex-1 basis-64">
-                  <p className="truncate font-medium">{doc["name"] as string}</p>
-                  <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                    {subject && <Badge variant="outline">{subject.label}</Badge>}
-                    {chapter && <Badge variant="outline">{chapter["title"] as string}</Badge>}
-                    <Badge variant="secondary">
-                      {DOC_KINDS.find((k) => k.value === doc["kind"])?.label}
-                    </Badge>
-                    <span>
-                      {Math.max(1, Math.round(Number(doc["size_bytes"] ?? 0) / 1024))} Ko
-                    </span>
-                    {doc["ai_notes"] ? (
-                      <button
-                        type="button"
-                        className="font-medium text-primary underline-offset-2 hover:underline"
-                        onClick={() => setNotesDoc(doc)}
-                      >
-                        Voir les notes IA
-                      </button>
-                    ) : (
-                      <span>Pas encore analysé</span>
-                    )}
+                <button
+                  type="button"
+                  onClick={() => setViewDoc(doc)}
+                  className="flex min-w-0 flex-1 basis-64 items-center gap-4 text-left"
+                >
+                  <FileText className="size-5 shrink-0 text-primary" />
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">{doc["name"] as string}</p>
+                    <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      {subject && <Badge variant="outline">{subject.label}</Badge>}
+                      {chapter && <Badge variant="outline">{chapter["title"] as string}</Badge>}
+                      <Badge variant="secondary">
+                        {DOC_KINDS.find((k) => k.value === doc["kind"])?.label}
+                      </Badge>
+                      <span>
+                        {Math.max(1, Math.round(Number(doc["size_bytes"] ?? 0) / 1024))} Ko
+                      </span>
+                    </div>
                   </div>
-                </div>
+                </button>
+                {doc["ai_notes"] ? (
+                  <Button variant="ghost" size="sm" onClick={() => setNotesDoc(doc)}>
+                    Notes IA
+                  </Button>
+                ) : null}
                 <AiActions doc={doc} />
-                <Button variant="ghost" size="icon" aria-label="Ouvrir" onClick={() => openDocument(doc)}>
-                  <Download className="size-4" />
+                <Button variant="ghost" size="icon" aria-label="Visualiser" onClick={() => setViewDoc(doc)}>
+                  <Eye className="size-4" />
                 </Button>
+
                 <Button
                   variant="ghost"
                   size="icon"
