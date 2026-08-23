@@ -1,12 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import { Download, FileText, Layers, Loader2, Sparkles, Target, Trash2, UploadCloud } from "lucide-react";
+import { Eye, FileText, Layers, Loader2, Sparkles, Target, Trash2, UploadCloud } from "lucide-react";
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 
 import { AppShell } from "@/components/AppShell";
 import { DocumentUpload } from "@/components/DocumentUpload";
+import { DocumentViewer } from "@/components/DocumentViewer";
 import { EmptyState, OptionSelect, useSubjectOptions } from "@/components/common";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ import { useRows, type Row } from "@/lib/api";
 import { supabase } from "@/integrations/supabase/client";
 import { DOC_KINDS } from "@/lib/study";
 import { analyzeDocument, generateFlashcards, generateQuiz } from "@/lib/ai.functions";
+
 
 export const Route = createFileRoute("/_authenticated/cours")({
   head: () => ({
@@ -128,22 +130,14 @@ function CoursesPage() {
   const subjects = useSubjectOptions();
   const [subjectFilter, setSubjectFilter] = useState<string | null>(null);
   const [notesDoc, setNotesDoc] = useState<Row | null>(null);
+  const [viewDoc, setViewDoc] = useState<Row | null>(null);
   const queryClient = useQueryClient();
 
   const filtered = subjectFilter
     ? documents.filter((d) => d["subject_id"] === subjectFilter)
     : documents;
 
-  async function openDocument(doc: Row) {
-    const { data, error } = await supabase.storage
-      .from("documents")
-      .createSignedUrl(doc["storage_path"] as string, 60);
-    if (error || !data) {
-      toast.error("Fichier introuvable");
-      return;
-    }
-    window.open(data.signedUrl, "_blank", "noopener");
-  }
+
 
   async function removeDocument(doc: Row) {
     await supabase.storage.from("documents").remove([doc["storage_path"] as string]);
@@ -182,6 +176,7 @@ function CoursesPage() {
       </div>
 
       <NotesDialog doc={notesDoc} onClose={() => setNotesDoc(null)} />
+      <DocumentViewer doc={viewDoc} onClose={() => setViewDoc(null)} />
 
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Chargement…</p>
@@ -198,35 +193,36 @@ function CoursesPage() {
             const chapter = chapters.find((c) => c["id"] === doc["chapter_id"]);
             return (
               <div key={doc["id"] as string} className="surface flex flex-wrap items-center gap-4 p-4">
-                <FileText className="size-5 shrink-0 text-primary" />
-                <div className="min-w-0 flex-1 basis-64">
-                  <p className="truncate font-medium">{doc["name"] as string}</p>
-                  <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-                    {subject && <Badge variant="outline">{subject.label}</Badge>}
-                    {chapter && <Badge variant="outline">{chapter["title"] as string}</Badge>}
-                    <Badge variant="secondary">
-                      {DOC_KINDS.find((k) => k.value === doc["kind"])?.label}
-                    </Badge>
-                    <span>
-                      {Math.max(1, Math.round(Number(doc["size_bytes"] ?? 0) / 1024))} Ko
-                    </span>
-                    {doc["ai_notes"] ? (
-                      <button
-                        type="button"
-                        className="font-medium text-primary underline-offset-2 hover:underline"
-                        onClick={() => setNotesDoc(doc)}
-                      >
-                        Voir les notes IA
-                      </button>
-                    ) : (
-                      <span>Pas encore analysé</span>
-                    )}
+                <button
+                  type="button"
+                  onClick={() => setViewDoc(doc)}
+                  className="flex min-w-0 flex-1 basis-64 items-center gap-4 text-left"
+                >
+                  <FileText className="size-5 shrink-0 text-primary" />
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">{doc["name"] as string}</p>
+                    <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                      {subject && <Badge variant="outline">{subject.label}</Badge>}
+                      {chapter && <Badge variant="outline">{chapter["title"] as string}</Badge>}
+                      <Badge variant="secondary">
+                        {DOC_KINDS.find((k) => k.value === doc["kind"])?.label}
+                      </Badge>
+                      <span>
+                        {Math.max(1, Math.round(Number(doc["size_bytes"] ?? 0) / 1024))} Ko
+                      </span>
+                    </div>
                   </div>
-                </div>
+                </button>
+                {doc["ai_notes"] ? (
+                  <Button variant="ghost" size="sm" onClick={() => setNotesDoc(doc)}>
+                    Notes IA
+                  </Button>
+                ) : null}
                 <AiActions doc={doc} />
-                <Button variant="ghost" size="icon" aria-label="Ouvrir" onClick={() => openDocument(doc)}>
-                  <Download className="size-4" />
+                <Button variant="ghost" size="icon" aria-label="Visualiser" onClick={() => setViewDoc(doc)}>
+                  <Eye className="size-4" />
                 </Button>
+
                 <Button
                   variant="ghost"
                   size="icon"
