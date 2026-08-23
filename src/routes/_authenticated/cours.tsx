@@ -176,6 +176,7 @@ function CoursesPage() {
       </div>
 
       <NotesDialog doc={notesDoc} onClose={() => setNotesDoc(null)} />
+      <DocumentViewer doc={viewDoc} onClose={() => setViewDoc(null)} />
 
       {isLoading ? (
         <p className="text-sm text-muted-foreground">Chargement…</p>
