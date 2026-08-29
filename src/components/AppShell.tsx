@@ -6,8 +6,6 @@ import {
   CalendarDays,
   CheckSquare,
   ChevronDown,
-
-  FileText,
   GraduationCap,
   Home,
   Layers,
@@ -33,7 +31,6 @@ import { cn } from "@/lib/utils";
 
 export const NAV = [
   { to: "/tableau-de-bord", label: "Accueil", icon: Home },
-  
   { to: "/matieres", label: "Mes matières", icon: BookOpen },
   { to: "/taches", label: "Tâches", icon: CheckSquare },
   { to: "/planning", label: "Planning", icon: CalendarDays },
