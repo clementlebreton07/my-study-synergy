@@ -209,35 +209,34 @@ export const Route = createFileRoute("/_authenticated/matieres/$subjectId")({
   head: () => ({
     meta: [
       { title: "Détail de la matière — StudyOS" },
-      { name: "description", content: "Chapitres, documents, exercices et notes de la matière." },
+      { name: "description", content: "Cours, documents et exercices de la matière." },
       { property: "og:title", content: "Détail de la matière — StudyOS" },
-      { property: "og:description", content: "Suivez le détail d'une matière chapitre par chapitre." },
+      { property: "og:description", content: "Vos cours et vos exercices, matière par matière." },
     ],
   }),
   component: SubjectDetail,
 });
 
-function ChapterDialog({
+function ExerciseDialog({
   subjectId,
   trigger,
   initial,
-  position,
 }: {
   subjectId: string;
   trigger: React.ReactNode;
   initial?: Row;
-  position?: number;
 }) {
   const [open, setOpen] = useState(false);
   const base = () => ({
-    subject_id: subjectId,
     title: "",
-    description: "",
-    mastery: "not_started",
-    position: position ?? 0,
+    subject_id: subjectId,
+    difficulty: "medium",
+    due_date: today(),
+    status: "todo",
+    difficulty_notes: "",
   });
   const [form, setForm] = useState<Row>(initial ?? base());
-  const save = useSaveRow("chapters", "Chapitre enregistré");
+  const save = useSaveRow("exercises", "Exercice enregistré");
   const set = (k: string, v: unknown) => setForm((f) => ({ ...f, [k]: v }));
 
   return (
@@ -249,31 +248,48 @@ function ChapterDialog({
       }}
     >
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>{initial ? "Modifier le chapitre" : "Nouveau chapitre"}</DialogTitle>
+          <DialogTitle>{initial ? "Modifier l'exercice" : "Nouvel exercice"}</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4">
-          <Field label="Titre">
+          <Field label="Intitulé">
             <Input
               value={(form["title"] as string) ?? ""}
-              maxLength={120}
+              maxLength={140}
               onChange={(e) => set("title", e.target.value)}
-              placeholder="Chapitre 1 — Fonctions"
+              placeholder="Exercices 12 à 18 page 45"
             />
           </Field>
-          <Field label="Description">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Difficulté">
+              <OptionSelect
+                value={form["difficulty"] as string}
+                options={DIFFICULTIES}
+                onChange={(v) => set("difficulty", v ?? "medium")}
+              />
+            </Field>
+            <Field label="Statut">
+              <OptionSelect
+                value={form["status"] as string}
+                options={EXERCISE_STATUS}
+                onChange={(v) => set("status", v ?? "todo")}
+              />
+            </Field>
+          </div>
+          <Field label="Date">
+            <Input
+              type="date"
+              value={(form["due_date"] as string) ?? ""}
+              onChange={(e) => set("due_date", e.target.value || null)}
+            />
+          </Field>
+          <Field label="Mes difficultés">
             <Textarea
-              value={(form["description"] as string) ?? ""}
-              maxLength={500}
-              onChange={(e) => set("description", e.target.value)}
-            />
-          </Field>
-          <Field label="Niveau de maîtrise">
-            <OptionSelect
-              value={form["mastery"] as string}
-              options={MASTERY.map((m) => ({ value: m.value, label: m.label }))}
-              onChange={(v) => set("mastery", v ?? "not_started")}
+              value={(form["difficulty_notes"] as string) ?? ""}
+              maxLength={1000}
+              placeholder="Je n'ai pas compris la question 3…"
+              onChange={(e) => set("difficulty_notes", e.target.value)}
             />
           </Field>
         </div>
@@ -290,97 +306,91 @@ function ChapterDialog({
   );
 }
 
-function ChapterCard({ chapter }: { chapter: Row }) {
-  const id = chapter["id"] as string;
-  const { data: documents = [] } = useRows<Row>("documents", { eq: { chapter_id: id } });
-  const { data: exercises = [] } = useRows<Row>("exercises", { eq: { chapter_id: id } });
-  const { data: notes = [] } = useRows<Row>("notes", { eq: { chapter_id: id } });
-  const { data: flashcards = [] } = useRows<Row>("flashcards", { eq: { chapter_id: id } });
-  const save = useSaveRow("chapters", "Chapitre mis à jour");
-  const remove = useDeleteRow("chapters", "Chapitre supprimé");
-  const [noteContent, setNoteContent] = useState("");
-  const saveNote = useSaveRow("notes", "Note ajoutée");
+function ExerciseList({ subjectId }: { subjectId: string }) {
+  const { data: exercises = [], isLoading } = useRows<Row>("exercises", {
+    eq: { subject_id: subjectId },
+    order: { column: "due_date" },
+  });
+  const remove = useDeleteRow("exercises", "Exercice supprimé");
+  const save = useSaveRow("exercises", "Statut mis à jour");
 
   return (
-    <div className="surface p-5">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h3 className="truncate text-base font-semibold">{chapter["title"] as string}</h3>
-          {chapter["description"] ? (
-            <p className="mt-1 text-sm text-muted-foreground">{chapter["description"] as string}</p>
-          ) : null}
-        </div>
-        <div className="flex items-center gap-1">
-          <ChapterDialog
-            subjectId={chapter["subject_id"] as string}
-            initial={chapter}
-            trigger={
-              <Button variant="ghost" size="sm">
-                Modifier
-              </Button>
-            }
-          />
-          <Button variant="ghost" size="icon" aria-label="Supprimer" onClick={() => remove.mutate(id)}>
-            <Trash2 className="size-4" />
-          </Button>
-        </div>
-      </div>
-
-      <div className="mt-4 flex flex-wrap items-center gap-2 text-xs">
-        <Badge variant="secondary">{masteryLabel(chapter["mastery"] as string)}</Badge>
-        <Badge variant="outline">{documents.length} document(s)</Badge>
-        <Badge variant="outline">{exercises.length} exercice(s)</Badge>
-        <Badge variant="outline">{notes.length} note(s)</Badge>
-        <Badge variant="outline">{flashcards.length} flashcard(s)</Badge>
-      </div>
-
-      <div className="mt-4 space-y-2">
-        <Progress value={masteryWeight(chapter["mastery"] as string)} />
-        <div className="flex flex-wrap gap-2">
-          {MASTERY.map((m) => (
-            <Button
-              key={m.value}
-              size="sm"
-              variant={chapter["mastery"] === m.value ? "default" : "outline"}
-              onClick={() => save.mutate({ id, mastery: m.value })}
-            >
-              {m.label}
+    <section className="mt-10">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold">Exercices</h2>
+        <ExerciseDialog
+          subjectId={subjectId}
+          trigger={
+            <Button variant="outline" size="sm">
+              <Plus className="mr-2 size-4" />
+              Nouvel exercice
             </Button>
+          }
+        />
+      </div>
+
+      {isLoading ? (
+        <p className="text-sm text-muted-foreground">Chargement…</p>
+      ) : exercises.length === 0 ? (
+        <p className="rounded-xl border border-dashed p-6 text-center text-sm text-muted-foreground">
+          Aucun exercice pour cette matière. Ajoutez-en pour suivre ce qui est acquis et ce qui reste à revoir.
+        </p>
+      ) : (
+        <div className="grid gap-3">
+          {exercises.map((ex) => (
+            <div key={ex["id"] as string} className="surface p-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="truncate font-medium">{ex["title"] as string}</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                    <Badge variant="secondary">
+                      {DIFFICULTIES.find((d) => d.value === ex["difficulty"])?.label}
+                    </Badge>
+                    {ex["due_date"] && <span>{formatShortDate(ex["due_date"] as string)}</span>}
+                  </div>
+                  {ex["difficulty_notes"] ? (
+                    <p className="mt-2 rounded-lg bg-secondary p-2 text-sm text-muted-foreground">
+                      {ex["difficulty_notes"] as string}
+                    </p>
+                  ) : null}
+                </div>
+                <div className="flex shrink-0 items-center gap-1">
+                  <ExerciseDialog
+                    subjectId={subjectId}
+                    initial={ex}
+                    trigger={
+                      <Button variant="ghost" size="sm">
+                        Modifier
+                      </Button>
+                    }
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Supprimer"
+                    onClick={() => remove.mutate(ex["id"] as string)}
+                  >
+                    <Trash2 className="size-4" />
+                  </Button>
+                </div>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2">
+                {EXERCISE_STATUS.map((s) => (
+                  <Button
+                    key={s.value}
+                    size="sm"
+                    variant={ex["status"] === s.value ? "default" : "outline"}
+                    onClick={() => save.mutate({ id: ex["id"], status: s.value })}
+                  >
+                    {s.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
           ))}
         </div>
-      </div>
-
-      {notes.length > 0 && (
-        <ul className="mt-4 space-y-2">
-          {notes.map((n) => (
-            <li key={n["id"] as string} className="rounded-lg bg-secondary p-3 text-sm">
-              {n["content"] as string}
-            </li>
-          ))}
-        </ul>
       )}
-
-      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-        <Input
-          value={noteContent}
-          maxLength={500}
-          placeholder="Ajouter une note sur ce chapitre…"
-          onChange={(e) => setNoteContent(e.target.value)}
-        />
-        <Button
-          variant="outline"
-          disabled={!noteContent.trim()}
-          onClick={() =>
-            saveNote.mutate(
-              { chapter_id: id, title: "Note", content: noteContent.trim() },
-              { onSuccess: () => setNoteContent("") },
-            )
-          }
-        >
-          Ajouter
-        </Button>
-      </div>
-    </div>
+    </section>
   );
 }
 
@@ -393,59 +403,21 @@ function SubjectDetail() {
     order: { column: "position" },
   });
 
-  const progress =
-    chapters.length === 0
-      ? 0
-      : Math.round(
-          chapters.reduce((sum, c) => sum + masteryWeight(c["mastery"] as string), 0) / chapters.length,
-        );
-
   return (
     <AppShell
       title={(subject?.["name"] as string) ?? "Matière"}
-      description={`${chapters.length} chapitre(s) · progression ${progress}%`}
+      description="Vos cours et vos exercices pour cette matière."
       actions={
-        <>
-          <Button variant="outline" asChild>
-            <Link to="/matieres">
-              <ArrowLeft className="mr-2 size-4" />
-              Retour
-            </Link>
-          </Button>
-          <ChapterDialog
-            subjectId={subjectId}
-            position={chapters.length}
-            trigger={
-              <Button>
-                <Plus className="mr-2 size-4" />
-                Nouveau chapitre
-              </Button>
-            }
-          />
-        </>
+        <Button variant="outline" asChild>
+          <Link to="/matieres">
+            <ArrowLeft className="mr-2 size-4" />
+            Retour
+          </Link>
+        </Button>
       }
     >
-      {chapters.length === 0 ? (
-        <EmptyState
-          title="Aucun chapitre"
-          text="Ajoutez les chapitres de cette matière pour y rattacher vos cours, exercices et notes."
-          action={
-            <ChapterDialog
-              subjectId={subjectId}
-              position={0}
-              trigger={<Button>Ajouter un chapitre</Button>}
-            />
-          }
-        />
-      ) : (
-        <div className="grid gap-4">
-          {chapters.map((c) => (
-            <ChapterCard key={c["id"] as string} chapter={c} />
-          ))}
-        </div>
-      )}
-
       <DocumentList subjectId={subjectId} chapters={chapters} />
+      <ExerciseList subjectId={subjectId} />
     </AppShell>
   );
 }
