@@ -444,6 +444,8 @@ function SubjectDetail() {
           ))}
         </div>
       )}
+
+      <DocumentList subjectId={subjectId} chapters={chapters} />
     </AppShell>
   );
 }
