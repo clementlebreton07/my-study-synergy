@@ -116,12 +116,12 @@ function RevisionPage() {
       ) : pool.length === 0 ? (
         <EmptyState
           title="Aucune fiche pour l'instant"
-          text="Ouvrez « Mes cours », puis cliquez sur « Fiches IA » sur un document : les fiches sont générées à partir de votre contenu réel."
+          text="Ouvrez une matière, puis cliquez sur « Fiches IA » sur un document : les fiches sont générées à partir de votre contenu réel."
           action={
             <Button asChild>
-              <a href="/cours">
+              <Link to="/matieres">
                 <Sparkles className="mr-2 size-4" /> Générer depuis un cours
-              </a>
+              </Link>
             </Button>
           }
         />
