@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { ArrowLeft, Eye, FileText, Layers, Loader2, Plus, Sparkles, Target, Trash2, UploadCloud } from "lucide-react";
+
 import { toast } from "sonner";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -17,7 +18,7 @@ import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { useDeleteRow, useRows, useSaveRow, type Row } from "@/lib/api";
 import { supabase } from "@/integrations/supabase/client";
-import { DOC_KINDS, MASTERY, masteryLabel, masteryWeight } from "@/lib/study";
+import { DIFFICULTIES, DOC_KINDS, EXERCISE_STATUS, formatShortDate, today } from "@/lib/study";
 import { analyzeDocument, generateFlashcards, generateQuiz } from "@/lib/ai.functions";
 
 function AiActions({ doc }: { doc: Row }) {
